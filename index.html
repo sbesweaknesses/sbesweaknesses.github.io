@@ -1,0 +1,774 @@
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+  <script></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf8"><title>Configuration-Related Bugs : Empirical Study</title>
+  <link rel="stylesheet" href="main.css">
+  </head>
+<body>
+<hr>
+<h2>An Empirical Study on Configuration-Related Code Weaknesses<br></h2>
+<hr>
+
+<h3>Overview</h3>
+<p align="justify">
+Developers often use the C preprocessor to handle variability and portability. However, many researchers and practitioners criticize the use of preprocessor directives, such as #ifdef and
+#endif, because of their negative effect on code understanding, maintainability, and error proneness. This negative effect may lead to configuration-related code weaknesses, which appear only when we enable or disable certain configuration options. A weakness is a type of mistake in software that, in proper conditions, could contribute to the introduction of vulnerabilities within that software. Configuration-related code weaknesses may be harder to detect and fix than weaknesses that appear in all configurations, because variability increases complexity. To address this problem, we propose a sampling-based white-box technique to detect configurationrelated weaknesses in the source code of configurable systems. To evaluate our technique, we performed an empirical study with 23 popular highly configurable systems that make heavy use of the C preprocessor, such as Apache Httpd and Libssh. Using our
+technique, we detected 55 configuration-related weaknesses in 14 configurable systems. In total, we found occurrences of the following five kinds of configuration-related code weaknesses: 30 memory leaks, 9 uninitialized variables, 9 null pointer dereferences, 5 resource leaks, and 2 buffer overflows. The corpus of these weaknesses is a valuable source to better support further research on configuration-related code weaknesses.
+</p>
+<br>
+
+<h3>Main Results</h3>
+Next we present the main results of this article.
+<br><br>
+<div class="centered">
+
+<p><b>Table I: Preprocessor-Related Resource Leaks.</b><br>
+</p>
+
+<table class="results" cellspacing="0" cellpadding="0">
+	<tr align="center" bgcolor="black">
+		<td><font color="white">&nbsp;&nbsp;&nbsp;PROJECT&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;FILE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;TYPE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;CONFIGURATION OPTIONS&nbsp;&nbsp;&nbsp;</font></td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=33e95792ce607dc600534ae6434d656728cbf415">src/pki_crypto.c</a></td>
+		<td>resource leak</td>
+		<td>1</td>	
+	</tr>
+	<tr align="center" class="even">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=a38c56370c25da2e3bb67e38306b264cd1361e56">tests/torture.c</a></td>
+		<td>resource leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Lighttpd</td>
+		<td><a href="https://github.com/lighttpd/lighttpd1.4/commit/d59c910d6aac53b819143e1d8c5b0576e8317ddb">lighttpd/src/mod_dirlisting.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;resource leak&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr>
+	<!-- <tr align="center" class="even">
+		<td>Libxml2</td>
+		<td><a href="https://git.gnome.org/browse/libxml2/commit/?id=15d12040ff48c5190addd315092c9262fbe54e91">libxml2/catalog.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;resource leak&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr> -->
+	<tr align="center" class="even">
+		<td>Lua</td>
+		<td><a href="https://github.com/LuaDist/lua/commit/b70b777f37b85a6d4ef72b8e08f2469b4777266d">src/loadlib_rel.c</a></td>
+		<td>resource leak</td>
+		<td>7</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Sylpheed</td>
+		<td><a href="https://github.com/jan0sch/sylpheed/commit/55ea74176a5340af7f3b26bb30ab447ee8930237">sylpheed/src/jpilot.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;resource leak&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr>
+</table>
+
+<br>
+
+<p><b>Table II: Preprocessor-Related Uninitialized Variables.</b><br>
+</p>
+
+<table class="results" cellspacing="0" cellpadding="0">
+	<tr align="center" bgcolor="black">
+		<td><font color="white">&nbsp;&nbsp;&nbsp;PROJECT&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;FILE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;TYPE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;CONFIGURATION OPTIONS&nbsp;&nbsp;&nbsp;</font></td>
+	</tr>
+<tr align="center" class="even">
+		<td>Apache</td>
+		<td><a href="https://github.com/apache/httpd/commit/728709bcb84ca8bf2202078f9ee470f2f8c48533">os/unix/unixd.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Apache</td>
+		<td><a href="https://github.com/apache/httpd/commit/0d5525c2e2f8ed83f13f989dc634cb7c47ed429f">modules/slotmem/mod_slotmem_shm.c</a></td>
+		<td>uninitialized variable</td>
+		<td>2</td>
+		
+	</tr>
+	<!-- <tr align="center" class="even">
+		<td>Apache</td>
+		<td><a href="https://github.com/apache/httpd/commit/c3317ffe425e012d778b2363cbee4be151f2c007">server/mpm/winnt/mpm_winnt.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+		
+	</tr> -->
+	<tr align="center" class="even">
+		<td>Apache</td>
+		<td><a href="https://github.com/apache/httpd/commit/826d0b0f6956844f021e3593fdbf91e05308adce">server/mpm/prefork/prefork.c</a></td>
+		<td>uninitialized variable</td>
+		<td>1</td>
+		
+	</tr> 
+	<!-- <tr align="center" class="even">
+		<td>Apache</td>
+		<td><a href="https://github.com/apache/httpd/commit/1b48bb3c1af572fe256473db502663cc2442cf29">modules/experimental/util_ldap_cache.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr> -->
+	<!--  <tr align="center" class="odd">
+		<td>Berkeley DB</td>
+		<td>berkeley/db/db_rec.c</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr> -->
+	<tr align="center" class="odd">
+		<td>Cherokee</td>
+		<td><a href="https://github.com/cherokee/webserver/commit/538b621e87ee090334e2cc4778aa66136cc50890">cherokee/main.c</a></td>
+		<td>uninitialized variable</td>
+		<td>1</td>
+		
+	</tr>
+	<!-- <tr align="center" class="even">
+		<td>Cvs</td>
+		<td>cvs/src/update.c</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>2</td>
+	</tr> -->
+	<tr align="center" class="even">
+		<td>Dia</td>
+		<td><a href="https://bugzilla.gnome.org/show_bug.cgi?id=726076">dia/tests/test-boundingbox.c</a></td>
+		<td>uninitialized variable</td>
+		<td>1</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Dia</td>
+		<td><a href="https://github.com/GNOME/dia/commit/19d24a1731aa2eed1a96b12d6e4decf0e9f687b9">app/render_eps.c</a></td>
+		<td>uninitialized variable</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Fvwm</td>
+		<td><a href="https://github.com/ThomasAdam/fvwm/commit/fb23ef89990201492a3e200dc557537ecd7b541d">fvwm/events.c</a></td>
+		<td>uninitialized variable</td>
+		<td>1</td>
+		
+	</tr>
+
+	<!--  <tr align="center" class="even">
+		<td>Fvwm</td>
+		<td><a href="https://github.com/ThomasAdam/fvwm/commit/6f7d56af1c14ae5019f74748e9552944874c1998">modules/FvwmButtons/FvwmButtons.c</a></td>
+		<td>uninitialized variable</td>
+		<td>1</td>
+	</tr> 
+	<tr align="center" class="odd">
+		<td>Ghostscript</td>
+		<td>ghostscript/base/gsroprun8.h</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>2</td>
+	</tr> 
+	<tr align="center" class="odd">
+		<td>Libpng</td>
+		<td><a href="http://sourceforge.net/p/libpng/code/ci/a5bf4e3767ac7ce7980115f727f8974fe77c557d">pngread.c</a></td>
+		<td>uninitialized variable</td>
+		<td>1</td>	
+	</tr> -->
+	<tr align="center" class="even">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=2a10019f82b9db58d7821ef93febc42b54042c92">libssh/sftp.c</a></td>
+		<td>Uninitialized Variable</td>
+		<td>1</td>
+	</tr>
+	<!-- <tr align="center" class="odd">
+		<td>Prc Tools</td>
+		<td>prc/libm/floorf.c</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>4</td>
+	</tr> 
+	<tr align="center" class="even">
+		<td>Sqlite</td>
+		<td><a href="https://github.com/mackyle/sqlite/commit/a06090f07e3cba645030f1d725cbbd98e2a28d10">sqlite/src/test_quota.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>2</td>
+	</tr> -->
+	<tr align="center" class="odd">
+		<td>Sylpheed</td>
+		<td><a href="https://github.com/jan0sch/sylpheed/commit/e2a38eb3585ebc668e50043b3a486209a4d36d1c">src/jpilot.c</a></td>
+		<td>uninitialized variable</td>
+		<td>1</td>
+	</tr>
+	<!-- <tr align="center" class="odd">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/5d49f9cb134f70fd059cb672ea6e4a150513d2e4">src/ex_getln.c</a></td>
+		<td>uninitialized variable</td>
+		<td>2</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/ea71cff8b9f67412bf76a09d671627ca6e9f1ff2">src/option.c</a></td>
+		<td>uninitialized variable</td>
+		<td>2</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/4dfb469b57d169e30b75d301eeb44bb8b8219bac">src/ops.c</a></td>
+		<td>uninitialized variable</td>
+		<td>2</td>
+	</tr> -->
+</table>
+
+<br>
+<p><b>Table III: Preprocessor-Related Memory Leaks.</b><br>
+</p>
+
+<table class="results" cellspacing="0" cellpadding="0">
+	<tr align="center" bgcolor="black">
+		<td><font color="white">&nbsp;&nbsp;&nbsp;PROJECT&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;FILE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;TYPE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;CONFIGURATION OPTIONS&nbsp;&nbsp;&nbsp;</font></td>
+	</tr>
+
+	
+	<tr align="center" class="odd">
+		<td>Apache</td>
+		<td><a href="https://github.com/apache/httpd/commit/ce0b029d3dc46512ae7fec271d4ca536fe22257b">server/mpm_common.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Cherokee</td>
+		<td><a href="https://github.com/cherokee/webserver/commit/dcd45f001152ef4b6421d36476d1430f5a04fdba">cherokee/thread.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Cherokee</td>
+		<td><a href="https://github.com/cherokee/webserver/commit/67023504f187fb324fe5891a99d295a236193e30">cherokee/main.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<!-- <tr align="center" class="odd">
+		<td>Cvs</td>
+		<td>cvs/src/server.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr> -->
+	
+	<tr align="center" class="even">
+		<td>Dia</td>
+		<td><a href="https://github.com/GNOME/dia/commit/ac2de8d4c0c9e3ce021d90aadb7c746dffd0495b">app/commands.c</a></td>
+		<td>memory leak</td>
+		<td>3</td>
+		
+	</tr>
+	
+	<tr align="center" class="odd">
+		<td>Fvwm</td>
+		<td><a href="https://github.com/ThomasAdam/fvwm/commit/a23ba60eb0faf483fcffb748d22486631f64913f">libs/FlocaleCharset.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Fvwm</td>
+		<td><a href="https://github.com/ThomasAdam/fvwm/commit/8e8255670bf933aa7d317753228e0f576756e084">fvwm/style.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Fvwm</td>
+		<td><a href="https://github.com/ThomasAdam/fvwm/commit/5af45c8b2dc756ff6fb99bbf1dd49ceb2f7b22d1">fvwm/builtins.c</a></td>
+		<td>memory leak</td>
+		<td>5</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Fvwm</td>
+		<td><a href="https://github.com/ThomasAdam/fvwm/commit/0e79fd00ddc566cb1b80792a18bd1549701012d7">fvwm/icons.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Gawk</td>
+		<td><a href="https://github.com/infoburp/gawk/commit/77459046d0c79ac5538f7da6731fbdb15c8d10fc">gawk/regcomp.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr>
+	<!--  <tr align="center" class="even">
+		<td>Ghostscript</td>
+		<td>ghostscript/contrib/opvp/gdevopvp.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr> -->
+	<tr align="center" class="even">
+		<td>Libpng</td>
+		<td><a href="http://sourceforge.net/p/libpng/code/ci/cc085343ec7074fad4f0d125c29beda5d824b2c8">pngset.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Libpng</td>
+		<td><a href="http://sourceforge.net/p/libpng/code/ci/f87df31c8c9f115da9c139777ae5a0765b10f099">contrib/libtests/pngimage.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Libpng</td>
+		<td><a href="https://github.com/jherico/libpng/commit/590fb8c481e5a36b7a0826b157cbe8415d1b33a9">png.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	
+	<tr align="center" class="odd">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=b7a7c816df48e7a66b452f5285f5cde3b3894a22">libssh/kex.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	
+	<tr align="center" class="even">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=4223c8a1166d2d155fc824b2881724a92c39461d">src/ecdh.c</a></td>
+		<td>memory leak</td>
+		<td>2</td>
+		
+	</tr>
+	
+	<tr align="center" class="odd">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=bf4d29b96399f5b1ed8927156b746d8d2f647ba2">libssh/auth.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=f402e8d113258d23e10cb2f31ed964bf535bd55a">libssh/keys.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=840cecbe0e68bc71c0afea4b3d79bd5702d403d0">libssh/options.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	
+	<tr align="center" class="even">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=36e4c2e5bcbdfcfcdf4c7b1df9b6b51be05b7b56">src/messages.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Lighttpd</td>
+		<td><a href="https://github.com/lighttpd/lighttpd2/commit/0347a26b370490aabe03b907b79a650705e75676">src/condition.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Lighttpd</td>
+		<td><a href="https://github.com/lighttpd/lighttpd1.4/commit/d59c910d6aac53b819143e1d8c5b0576e8317ddb">lighttpd/src/mod_dirlisting.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>M4</td>
+		<td><a href="http://git.savannah.gnu.org/gitweb/?p=m4.git;a=blobdiff;f=m4/hash.c;h=a6f139c630ab61f895a0ed168128d4b32792d6ee;hp=dc9bd7108b0659e812bdc6d000e61f3b3c14dbd9;hb=daa2edf98ccd6a23cdc04ad1d5ca75026a2ee5a7;hpb=311fdd95504bdeb25464ff9609ee11c31019f77c">m4/hash.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<!--  <tr align="center" class="odd">
+		<td>M4</td>
+		<td>m4/lib/regex.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>M4</td>
+		<td>m4/lib/regex.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr> 
+	<tr align="center" class="even">
+		<td>Mptris</td>
+		<td>mptris/intl/localcharset.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>1</td>
+	</tr>
+	
+	<tr align="center" class="odd">
+		<td>Sendmail</td>
+		<td>sendmail/libsmdb/smndbm.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>6</td>
+	</tr> -->
+	<tr align="center" class="even">
+		<td>Sylpheed</td>
+		<td><a href="https://github.com/jan0sch/sylpheed/commit/95a034f258f5e3fe7b9e67883cacecdd642c157a">libsylph/utils.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/126d5646aa37808c41d18f98c29ef255870135f0">src/if_cscope.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/126d5646aa37808c41d18f98c29ef255870135f0">src/memline.c</a></td>
+		<td>memory leak</td>
+		<td>2</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/126d5646aa37808c41d18f98c29ef255870135f0">src/netbeans.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/70bffe65af5e138479f3a24ae1d2489bff552535">src/ops.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/85a94fc8cbfe0ff3bb5ecae4e477c31bcddf56a0">src/hardcopy.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	
+	
+	<tr align="center" class="even">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/16cd3b5d91b9bd392d336a9182f815a9186549ab">src/ex_cmds.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/f15621e7d67a3dbff1703b975401f769479d83d5">src/eval.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+<tr align="center" class="even">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/36443a74e8719f50fbe0664734332b4280d86421">src/window.c</a></td>
+		<td>memory leak</td>
+		<td>1</td>
+		
+	</tr>
+</table>
+
+<p><b>Table IV: Preprocessor-Related Null Deferences.</b><br>
+</p>
+
+<table class="results" cellspacing="0" cellpadding="0">
+	<tr align="center" bgcolor="black">
+		<td><font color="white">&nbsp;&nbsp;&nbsp;PROJECT&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;FILE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;TYPE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;CONFIGURATION OPTIONS&nbsp;&nbsp;&nbsp;</font></td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Apache</td>
+		<td><a href="https://github.com/apache/httpd/commit/f3d438afd9a500bd96d4090121657bf5d4219b34">server/listen.c</a></td>
+		<td>null deference</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Dia</td>
+		<td><a href="https://github.com/GNOME/dia/commit/8ab162c6a98b866da9a2ef457d4fe4a9b7bccf90">lib/prop_text.c</a></td>
+		<td>null deference</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Fvwm</td>
+		<td><a href="https://github.com/ThomasAdam/fvwm/commit/65b2b7579aaf95548eed092a4f4889598ab71edf">fvwm/virtual.c</a></td>
+		<td>null deference</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Irssi</td>
+		<td>&nbsp;&nbsp;&nbsp;<a href="https://github.com/irssi/irssi/commit/0b8a23ad637c62ab763ef79397e81de91d4b627b">src/core/recode.c</a>&nbsp;&nbsp;&nbsp;</td>
+		<td>null deference</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Irssi</td>
+		<td>&nbsp;&nbsp;&nbsp;<a href="https://github.com/irssi/irssi/commit/ec83dd762ada05170a9c80c6582c4754c66f9f0d">src/core/network-openssl.c</a>&nbsp;&nbsp;&nbsp;</td>
+		<td>null deference</td>
+		<td>1</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=fadbe80c4389185f80b3d5a8814510f957a6ca8a">src/options.c</a></td>
+		<td>null deference</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="odd">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=22e88581346acfe0360cf6efebba3ed0c2842d01">src/agent.c</a></td>
+		<td>null deference</td>
+		<td>1</td>
+		
+	</tr>
+	<tr align="center" class="even">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=0a4ea19982900db1a7942c956c8c2f3ba80aedae">src/pki.c</a></td>
+		<td>null deference</td>
+		<td>1</td>	
+	</tr>
+	<tr align="center" class="odd">
+		<td>Libssh</td>
+		<td><a href="https://git.libssh.org/projects/libssh.git/commit/?id=8567fc8d8cf31cce0e2bf98321b6acd4bb9b4cfb">src/messages.c</a></td>
+		<td>null deference</td>
+		<td>1</td>
+		
+	</tr>
+</table>
+
+<br><br>
+
+<p><b>Table V: Preprocessor-Related Buffer Overflow.</b><br>
+</p>
+
+<table class="results" cellspacing="0" cellpadding="0">
+	<tr align="center" bgcolor="black">
+		<td><font color="white">&nbsp;&nbsp;&nbsp;PROJECT&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;FILE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;TYPE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;CONFIGURATION OPTIONS&nbsp;&nbsp;&nbsp;</font></td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Bison</td>
+		<td><a href="http://git.savannah.gnu.org/cgit/bison.git/commit/?id=18d9185cae4c43684e4a2a134dd3090b55307586">data/glr.c</a></td>
+		<td>buffer overflow</td>
+		<td>1</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Vim</td>
+		<td><a href="https://github.com/b4winckler/vim/commit/9038b4ac051528cd2fed43cf2d4bd33e2e190bb9">src/ex_docmd.c</a></td>
+		<td>buffer overflow</td>
+		<td>1</td>
+	</tr>
+</table>
+
+<br><br>
+
+<p><b>Table VI: Patches to Fix Preprocessor-Related Bugs.</b><br>
+</p>
+
+<table class="results" cellspacing="0" cellpadding="0">
+	<tr align="center" bgcolor="black">
+		<td><font color="white">&nbsp;&nbsp;&nbsp;PROJECT&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;FILE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;TYPE&nbsp;&nbsp;&nbsp;</font></td>
+		<td><font color="white">&nbsp;&nbsp;&nbsp;STATUS&nbsp;&nbsp;&nbsp;</font></td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Apache</td>
+		<td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=56210">apache/modules/ssl/ssl_util.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;Null Deference&nbsp;&nbsp;&nbsp;</td>
+		<td>rejected</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Apache</td>
+		<td>apache/os/win32/ap_regkey.c</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>rejected</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Apache</td>
+		<td>apache/os/win32/ap_regkey.c</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>rejected</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Apache</td>
+		<td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=56211">apache/server/mpm/winnt/mpm_winnt.c</a></td>
+		<td>memory leak</td>
+		<td>rejected</td>
+	</tr>
+	<!--  <tr align="center" class="odd">
+		<td>Berkeley DB</td>
+		<td>berkeley/db/db_rec.c</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr> -->
+	<!-- <tr align="center" class="odd">
+		<td>Cvs</td>
+		<td>cvs/src/server.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Cvs</td>
+		<td>cvs/src/update.c</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr> -->
+	<tr align="center" class="odd">
+		<td>Dia</td>
+		<td><a href="https://bugzilla.gnome.org/show_bug.cgi?id=726076">dia/tests/test-boundingbox.c</a></td>
+		<td>uninitialized variable</td>
+		<td>fixed</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Gawk</td>
+		<td>gawk/regcomp.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>fixed</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Gawk</td>
+		<td><a href="http://git.savannah.gnu.org/cgit/gawk.git/commit/?id=9175c4e1b26dbdac5600df0b4d33717004c9a434">gawk/pc/popen.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>fixed</td>
+	</tr>
+	<!-- <tr align="center" class="even">
+		<td>Ghostscript</td>
+		<td>ghostscript/base/gsroprun8.h</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr> 
+	<tr align="center" class="odd">
+		<td>Ghostscript</td>
+		<td>ghostscript/contrib/opvp/gdevopvp.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr> -->
+	<tr align="center" class="odd">
+		<td>Lighttpd</td>
+		<td><a href="https://github.com/lighttpd/lighttpd1.4/commit/d59c910d6aac53b819143e1d8c5b0576e8317ddb">lighttpd/src/mod_dirlisting.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>fixed</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Lighttpd</td>
+		<td><a href="https://github.com/lighttpd/lighttpd1.4/commit/d59c910d6aac53b819143e1d8c5b0576e8317ddb">lighttpd/src/mod_dirlisting.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;resource leak&nbsp;&nbsp;&nbsp;</td>
+		<td>fixed</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Libxml2</td>
+		<td><a href="https://git.gnome.org/browse/libxml2/commit/?id=15d12040ff48c5190addd315092c9262fbe54e91">libxml2/catalog.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;resource leak&nbsp;&nbsp;&nbsp;</td>
+		<td>fixed</td>
+	</tr>
+	<!-- <tr align="center" class="odd">
+		<td>M4</td>
+		<td>m4/lib/regex.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr> 
+	<tr align="center" class="even">
+		<td>M4</td>
+		<td>m4/lib/regex.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Mptris</td>
+		<td>mptris/intl/localcharset.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Prc Tools</td>
+		<td>prc/libm/floorf.c</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Prc Tools</td>
+		<td>prc/libm/floorf.c</td>
+		<td>&nbsp;&nbsp;&nbsp;segmentation fault&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Sendmail</td>
+		<td>sendmail/libsmdb/smndbm.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>accepted</td>
+	</tr> -->
+	<tr align="center" class="even">
+		<td>Sqlite</td>
+		<td><a href="https://github.com/mackyle/sqlite/commit/a06090f07e3cba645030f1d725cbbd98e2a28d10">sqlite/src/test_quota.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>fixed</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Sqlite</td>
+		<td>os_win.c</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>rejected</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Sqlite</td>
+		<td>test_intarray.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>rejected</td>
+	</tr>
+	<tr align="center" class="odd">
+		<td>Sylpheed</td>
+		<td><a href="https://github.com/jan0sch/sylpheed/commit/55ea74176a5340af7f3b26bb30ab447ee8930237">sylpheed/src/jpilot.c</a></td>
+		<td>&nbsp;&nbsp;&nbsp;resource leak&nbsp;&nbsp;&nbsp;</td>
+		<td>fixed</td>
+	</tr>
+	<!-- <tr align="center" class="odd">
+		<td>Xterm</td>
+		<td>xterm/button.c</td>
+		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
+		<td>rejected</td>
+	</tr>
+	<tr align="center" class="even">
+		<td>Xterm</td>
+		<td>xterm/doublechr.c</td>
+		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
+		<td>rejected</td>
+	</tr> -->
+</table>
+
+</div>
+
+
+
+
+
+
+</body></html>
+
