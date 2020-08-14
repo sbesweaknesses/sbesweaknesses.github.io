@@ -13,9 +13,7 @@
 
 <h3>Overview</h3>
 <p align="justify">
-Developers often use the C preprocessor to handle variability and portability. However, many researchers and practitioners criticize the use of preprocessor directives, such as #ifdef and
-#endif, because of their negative effect on code understanding, maintainability, and error proneness. This negative effect may lead to configuration-related code weaknesses, which appear only when we enable or disable certain configuration options. A weakness is a type of mistake in software that, in proper conditions, could contribute to the introduction of vulnerabilities within that software. Configuration-related code weaknesses may be harder to detect and fix than weaknesses that appear in all configurations, because variability increases complexity. To address this problem, we propose a sampling-based white-box technique to detect configurationrelated weaknesses in the source code of configurable systems. To evaluate our technique, we performed an empirical study with 23 popular highly configurable systems that make heavy use of the C preprocessor, such as Apache Httpd and Libssh. Using our
-technique, we detected 55 configuration-related weaknesses in 14 configurable systems. In total, we found occurrences of the following five kinds of configuration-related code weaknesses: 30 memory leaks, 9 uninitialized variables, 9 null pointer dereferences, 5 resource leaks, and 2 buffer overflows. The corpus of these weaknesses is a valuable source to better support further research on configuration-related code weaknesses.
+Developers often use the C preprocessor to handle variability and portability. However, many researchers and practitioners criticize the use of preprocessor directives because of their negative effect on code understanding, maintainability, and error proneness. This negative effect may lead to configuration-related code weaknesses, which appear only when we enable or disable certain configuration options. A weakness is a type of mistake in software that, in proper conditions, could contribute to the introduction of vulnerabilities within that software. Configuration-related code weaknesses may be harder to detect and fix than weaknesses that appear in all configurations, because variability increases complexity. To address this problem, we propose a sampling-based white-box technique to detect configuration-related weaknesses in configurable systems. To evaluate our technique, we performed an empirical study with 24 popular highly configurable systems that make heavy use of the C preprocessor, such as Apache Httpd and Libssh. Using our technique, we detected 57 configuration-related weaknesses in 16 systems. In total, we found occurrences of the following five kinds of weaknesses: 30 memory leaks, 10 uninitialized variables, 9 null pointer dereferences, 6 resource leaks, and 2 buffer overflows. The corpus of these weaknesses is a valuable source to better support further research on configuration-related code weaknesses.
 </p>
 <br>
 
@@ -47,6 +45,15 @@ Next we present the main results of this article.
 		<td>1</td>
 		
 	</tr>
+
+	<tr align="center" class="even">
+		<td>Libxml2</td>
+		<td><a href="https://gitlab.gnome.org/GNOME/libxml2/commit/15d12040ff48c5190addd315092c9262fbe54e91">libxml2/catalog.c</a></td>
+		<td>resource leak</td>
+		<td>1</td>
+		
+	</tr>
+
 	<tr align="center" class="odd">
 		<td>Lighttpd</td>
 		<td><a href="https://github.com/lighttpd/lighttpd1.4/commit/d59c910d6aac53b819143e1d8c5b0576e8317ddb">lighttpd/src/mod_dirlisting.c</a></td>
@@ -111,6 +118,14 @@ Next we present the main results of this article.
 		<td><a href="https://github.com/apache/httpd/commit/826d0b0f6956844f021e3593fdbf91e05308adce">server/mpm/prefork/prefork.c</a></td>
 		<td>uninitialized variable</td>
 		<td>1</td>
+		
+	</tr> 
+
+	<tr align="center" class="even">
+		<td>Bash</td>
+		<td><a href="http://git.savannah.gnu.org/cgit/bash.git/diff/lib/malloc/malloc.c?id=a0c0a00fc419b7bc08202a79134fcd5bc0427071">lib/malloc/malloc.c</a></td>
+		<td>uninitialized variable</td>
+		<td>3</td>
 		
 	</tr> 
 	<!-- <tr align="center" class="even">
@@ -601,7 +616,7 @@ Next we present the main results of this article.
 	</tr>
 	<tr align="center" class="even">
 		<td>Apache</td>
-		<td>&nbsp;&nbsp;&nbsp;apache/modules/ssl/ssl_util.c&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=56210">apache/modules/ssl/ssl_util.c</a></td>
 		<td>&nbsp;&nbsp;&nbsp;Null Deference&nbsp;&nbsp;&nbsp;</td>
 		<td>rejected</td>
 	</tr>
@@ -619,7 +634,7 @@ Next we present the main results of this article.
 	</tr>
 	<tr align="center" class="odd">
 		<td>Apache</td>
-		<td>&nbsp;&nbsp;&nbsp;apache/server/mpm/winnt/mpm_winnt.c&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=56211">apache/server/mpm/winnt/mpm_winnt.c</a></td>
 		<td>memory leak</td>
 		<td>rejected</td>
 	</tr>
@@ -643,19 +658,13 @@ Next we present the main results of this article.
 	</tr> -->
 	<tr align="center" class="odd">
 		<td>Dia</td>
-		<td>&nbsp;&nbsp;&nbsp;dia/tests/test-boundingbox.c&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="https://bugzilla.gnome.org/show_bug.cgi?id=726076">dia/tests/test-boundingbox.c</a></td>
 		<td>uninitialized variable</td>
 		<td>fixed</td>
 	</tr>
 	<tr align="center" class="even">
 		<td>Gawk</td>
 		<td>gawk/regcomp.c</td>
-		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
-		<td>fixed</td>
-	</tr>
-	<tr align="center" class="odd">
-		<td>Gawk</td>
-		<td>&nbsp;&nbsp;&nbsp;gawk/pc/popen.c&nbsp;&nbsp;&nbsp;</td>
 		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
 		<td>fixed</td>
 	</tr>
@@ -673,19 +682,19 @@ Next we present the main results of this article.
 	</tr> -->
 	<tr align="center" class="odd">
 		<td>Lighttpd</td>
-		<td>&nbsp;&nbsp;&nbsp;lighttpd/src/mod_dirlisting.c&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="https://github.com/lighttpd/lighttpd1.4/commit/d59c910d6aac53b819143e1d8c5b0576e8317ddb">lighttpd/src/mod_dirlisting.c</a></td>
 		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
 		<td>fixed</td>
 	</tr>
 	<tr align="center" class="even">
 		<td>Lighttpd</td>
-		<td>&nbsp;&nbsp;&nbsp;lighttpd/src/mod_dirlisting.c&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="https://github.com/lighttpd/lighttpd1.4/commit/d59c910d6aac53b819143e1d8c5b0576e8317ddb">lighttpd/src/mod_dirlisting.c</a></td>
 		<td>&nbsp;&nbsp;&nbsp;resource leak&nbsp;&nbsp;&nbsp;</td>
 		<td>fixed</td>
 	</tr>
 	<tr align="center" class="odd">
 		<td>Libxml2</td>
-		<td>&nbsp;&nbsp;&nbsp;libxml2/catalog.c&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="https://git.gnome.org/browse/libxml2/commit/?id=15d12040ff48c5190addd315092c9262fbe54e91">libxml2/catalog.c</a></td>
 		<td>&nbsp;&nbsp;&nbsp;resource leak&nbsp;&nbsp;&nbsp;</td>
 		<td>fixed</td>
 	</tr>
@@ -725,12 +734,6 @@ Next we present the main results of this article.
 		<td>&nbsp;&nbsp;&nbsp;memory leak&nbsp;&nbsp;&nbsp;</td>
 		<td>accepted</td>
 	</tr> -->
-	<tr align="center" class="even">
-		<td>Sqlite</td>
-		<td>&nbsp;&nbsp;&nbsp;sqlite/src/test_quota.c&nbsp;&nbsp;&nbsp;</td>
-		<td>&nbsp;&nbsp;&nbsp;uninitialized variable&nbsp;&nbsp;&nbsp;</td>
-		<td>fixed</td>
-	</tr>
 	<tr align="center" class="odd">
 		<td>Sqlite</td>
 		<td>os_win.c</td>
@@ -745,7 +748,7 @@ Next we present the main results of this article.
 	</tr>
 	<tr align="center" class="odd">
 		<td>Sylpheed</td>
-		<td>&nbsp;&nbsp;&nbsp;sylpheed/src/jpilot.c&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="https://github.com/jan0sch/sylpheed/commit/55ea74176a5340af7f3b26bb30ab447ee8930237">sylpheed/src/jpilot.c</a></td>
 		<td>&nbsp;&nbsp;&nbsp;resource leak&nbsp;&nbsp;&nbsp;</td>
 		<td>fixed</td>
 	</tr>
